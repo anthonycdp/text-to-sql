@@ -1,0 +1,162 @@
+{
+  "sample_queries": [
+    {
+      "category": "Basic Queries",
+      "queries": [
+        {
+          "natural_language": "Show all employees",
+          "expected_sql": "SELECT * FROM employees LIMIT 100",
+          "description": "Simple SELECT all with limit"
+        },
+        {
+          "natural_language": "List all departments",
+          "expected_sql": "SELECT * FROM departments LIMIT 100",
+          "description": "List departments"
+        },
+        {
+          "natural_language": "Show all products",
+          "expected_sql": "SELECT * FROM products LIMIT 100",
+          "description": "List products"
+        }
+      ]
+    },
+    {
+      "category": "Filtering",
+      "queries": [
+        {
+          "natural_language": "Show employees in Engineering department",
+          "expected_sql": "SELECT e.* FROM employees e JOIN departments d ON e.department_id = d.id WHERE d.name = 'Engineering'",
+          "description": "Filter by department name with JOIN"
+        },
+        {
+          "natural_language": "Find employees with salary greater than 80000",
+          "expected_sql": "SELECT * FROM employees WHERE salary > 80000",
+          "description": "Numeric comparison filter"
+        },
+        {
+          "natural_language": "Show active employees only",
+          "expected_sql": "SELECT * FROM employees WHERE is_active = TRUE",
+          "description": "Boolean filter"
+        },
+        {
+          "natural_language": "Find products in Electronics category",
+          "expected_sql": "SELECT * FROM products WHERE category = 'Electronics'",
+          "description": "String equality filter"
+        }
+      ]
+    },
+    {
+      "category": "Aggregations",
+      "queries": [
+        {
+          "natural_language": "Count all employees",
+          "expected_sql": "SELECT COUNT(*) as count FROM employees",
+          "description": "Simple COUNT"
+        },
+        {
+          "natural_language": "What is the average salary by department",
+          "expected_sql": "SELECT d.name, AVG(e.salary) as avg_salary FROM employees e JOIN departments d ON e.department_id = d.id GROUP BY d.name",
+          "description": "Average with GROUP BY"
+        },
+        {
+          "natural_language": "Show total sales by region",
+          "expected_sql": "SELECT region, SUM(total_amount) as total FROM sales GROUP BY region",
+          "description": "SUM with GROUP BY"
+        },
+        {
+          "natural_language": "What is the maximum salary",
+          "expected_sql": "SELECT MAX(salary) as max_salary FROM employees",
+          "description": "MAX aggregation"
+        },
+        {
+          "natural_language": "Count employees in each department",
+          "expected_sql": "SELECT d.name, COUNT(e.id) as employee_count FROM departments d LEFT JOIN employees e ON d.id = e.department_id GROUP BY d.name",
+          "description": "COUNT with JOIN and GROUP BY"
+        }
+      ]
+    },
+    {
+      "category": "Ordering and Limits",
+      "queries": [
+        {
+          "natural_language": "Top 5 highest paid employees",
+          "expected_sql": "SELECT * FROM employees ORDER BY salary DESC LIMIT 5",
+          "description": "ORDER BY DESC with LIMIT"
+        },
+        {
+          "natural_language": "List the 10 most expensive products",
+          "expected_sql": "SELECT * FROM products ORDER BY price DESC LIMIT 10",
+          "description": "Top N by column"
+        },
+        {
+          "natural_language": "Show the 3 most recent sales",
+          "expected_sql": "SELECT * FROM sales ORDER BY sale_date DESC LIMIT 3",
+          "description": "Order by date"
+        }
+      ]
+    },
+    {
+      "category": "Joins",
+      "queries": [
+        {
+          "natural_language": "Show employees with their department names",
+          "expected_sql": "SELECT e.first_name, e.last_name, d.name as department FROM employees e JOIN departments d ON e.department_id = d.id",
+          "description": "Simple JOIN"
+        },
+        {
+          "natural_language": "List all sales with employee and product details",
+          "expected_sql": "SELECT s.*, e.first_name, e.last_name, s.product_name FROM sales s JOIN employees e ON s.employee_id = e.id",
+          "description": "JOIN with multiple columns"
+        },
+        {
+          "natural_language": "Show projects with their department information",
+          "expected_sql": "SELECT p.*, d.name as department_name FROM projects p JOIN departments d ON p.department_id = d.id",
+          "description": "Project-department relationship"
+        }
+      ]
+    },
+    {
+      "category": "Date Filtering",
+      "queries": [
+        {
+          "natural_language": "Show employees hired in 2022",
+          "expected_sql": "SELECT * FROM employees WHERE hire_date >= '2022-01-01' AND hire_date <= '2022-12-31'",
+          "description": "Date range filter"
+        },
+        {
+          "natural_language": "Show sales from January 2024",
+          "expected_sql": "SELECT * FROM sales WHERE sale_date >= '2024-01-01' AND sale_date <= '2024-01-31'",
+          "description": "Specific month filter"
+        }
+      ]
+    },
+    {
+      "category": "Complex Queries",
+      "queries": [
+        {
+          "natural_language": "Average salary of active employees by department, ordered by average salary descending",
+          "expected_sql": "SELECT d.name, AVG(e.salary) as avg_salary FROM employees e JOIN departments d ON e.department_id = d.id WHERE e.is_active = TRUE GROUP BY d.name ORDER BY avg_salary DESC",
+          "description": "Multiple clauses combined"
+        },
+        {
+          "natural_language": "Total sales amount by employee for employees who made more than 2 sales",
+          "expected_sql": "SELECT e.first_name, e.last_name, COUNT(*) as sale_count, SUM(s.total_amount) as total FROM employees e JOIN sales s ON e.id = s.employee_id GROUP BY e.id HAVING COUNT(*) > 2",
+          "description": "JOIN with HAVING clause"
+        }
+      ]
+    }
+  ],
+  "usage_tips": [
+    "Be specific about table and column names when possible",
+    "Use natural language terms like 'greater than', 'less than', 'between'",
+    "Specify ordering with words like 'highest', 'lowest', 'most recent', 'oldest'",
+    "Use 'by' to indicate grouping (e.g., 'by department', 'by region')",
+    "For limits, use 'top N', 'first N', or 'N most/least'"
+  ],
+  "security_notes": [
+    "Only SELECT queries are allowed by default",
+    "Results are limited to prevent excessive data retrieval",
+    "SQL injection patterns are detected and blocked",
+    "Destructive queries (DROP, DELETE, etc.) require explicit permission"
+  ]
+}
